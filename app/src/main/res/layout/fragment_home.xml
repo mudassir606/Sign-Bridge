@@ -11,7 +11,7 @@
         android:id="@+id/text_value_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="this is text view where text shows"
+        android:text=""
         android:textStyle="bold"
         android:textSize="16sp"
         android:layout_marginTop="10dp"
