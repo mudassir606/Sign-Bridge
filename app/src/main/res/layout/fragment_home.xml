@@ -35,6 +35,7 @@
         android:id="@+id/cardView3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -79,6 +80,7 @@
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView
+                    android:id="@+id/mic_img"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
@@ -97,12 +99,14 @@
                 app:layout_constraintTop_toBottomOf="@+id/edit_translate_id" />
 
             <TextView
+                android:id="@+id/listening_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
+                android:layout_marginStart="16dp"
                 android:text="Listening..."
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/edit_translate_id"
                 app:layout_constraintStart_toStartOf="@+id/edit_translate_id"
                 app:layout_constraintTop_toTopOf="@+id/edit_translate_id" />

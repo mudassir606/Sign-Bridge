@@ -35,15 +35,11 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         frameLayout = findViewById(R.id.frame_layout);
-        item1=findViewById(R.id.item1);
-        item2=findViewById(R.id.item2);
-        item3=findViewById(R.id.item3);
-        item1_text=findViewById(R.id.item1_text);
-        item2_text=findViewById(R.id.item2_text);
-        item3_text=findViewById(R.id.item3_text);
-        item1_img=findViewById(R.id.item1_img);
-        item2_img=findViewById(R.id.item2_img);
-        item3_img=findViewById(R.id.item3_img);
+
+        initializeViews();
+
+        onImageClicked(0);
+
 
         replaceFragment(new HomeFragment());
 
@@ -61,7 +57,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        // Assuming you have ImageView and TextView IDs as image1, image2, image3, text1, text2, text3
         imageViews[0] = findViewById(R.id.item1_img);
         imageViews[1] = findViewById(R.id.item2_img);
         imageViews[2] = findViewById(R.id.item3_img);
