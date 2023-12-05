@@ -12,7 +12,6 @@
         android:layout_height="wrap_content"
         android:text="this is text view where text shows"
         android:layout_marginHorizontal="40dp"
-        tex
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
