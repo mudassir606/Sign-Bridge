@@ -22,11 +22,15 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="470dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        android:layout_marginLeft="-60dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/bg_imgg"
         app:layout_constraintBottom_toTopOf="@+id/cardView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_value_id" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
