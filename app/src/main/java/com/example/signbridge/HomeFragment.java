@@ -2,15 +2,15 @@ package com.example.signbridge;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.icu.text.Transliterator;
+import android.os.Build;
 import android.os.Bundle;
-
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-
 import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,9 +30,9 @@ public class HomeFragment extends Fragment {
     TextView listeningText,result_text;
     ImageView cameraImg;
 
-     SpeechRecognizer speechRecognizer;
-     Handler handler = new Handler();
-     boolean isButtonHeld = false;
+    SpeechRecognizer speechRecognizer;
+    Handler handler = new Handler();
+    boolean isButtonHeld = false;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -41,8 +41,7 @@ public class HomeFragment extends Fragment {
 
     @SuppressLint("MissingInflatedId")
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
 
@@ -52,7 +51,6 @@ public class HomeFragment extends Fragment {
         listeningText = rootView.findViewById(R.id.listening_id);
         result_text = rootView.findViewById(R.id.text_value_id);
 
-
         performMicOperation();
 
 
@@ -60,34 +58,27 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-
     @SuppressLint("ClickableViewAccessibility")
     private void performMicOperation() {
-        mic.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    // Button is pressed
-                    isButtonHeld = true;
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (isButtonHeld) {
-                                // Perform actions when button is held
-                                handleVoiceListening(true);
-                            }
-                        }
-                    }, 500); // Change the delay according to your preference
-                } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
-                    // Button is released or touch is canceled
-                    isButtonHeld = false;
-                    handler.removeCallbacksAndMessages(null); // Remove any pending callbacks
-                    handleVoiceListening(false);
-                }
-                return true;
+        mic.setOnTouchListener((v, event) -> {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                isButtonHeld = true;
+                handler.postDelayed(startListeningRunnable, 500);
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
+                isButtonHeld = false;
+                handler.removeCallbacks(startListeningRunnable);
+                handleVoiceListening(false);
             }
+            return true;
         });
     }
+
+    private final Runnable startListeningRunnable = new Runnable() {
+        @Override
+        public void run() {
+            handleVoiceListening(true);
+        }
+    };
 
     private void handleVoiceListening(boolean startListening) {
         if (startListening) {
@@ -96,66 +87,77 @@ public class HomeFragment extends Fragment {
             cameraImg.setVisibility(View.INVISIBLE);
             startListening();
         } else {
-            if (speechRecognizer != null) {
-                speechRecognizer.stopListening();
-            }
+            stopListening();
+            listeningText.setVisibility(View.INVISIBLE);
+            translate_text.setVisibility(View.VISIBLE);
+            cameraImg.setVisibility(View.VISIBLE);
         }
     }
 
-    // Method to start listening for speech input
-    private void startListening() {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireContext());
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {}
+    // Initialize SpeechRecognizer only once
+    private void initSpeechRecognizer() {
+        if (speechRecognizer == null) {
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(requireContext());
+            speechRecognizer.setRecognitionListener(new RecognitionListener() {
+                // Override methods for RecognitionListener
+                @Override
+                public void onReadyForSpeech(Bundle params) {}
 
-            @Override
-            public void onBeginningOfSpeech() {}
+                @Override
+                public void onBeginningOfSpeech() {}
 
-            @Override
-            public void onRmsChanged(float rmsdB) {}
+                @Override
+                public void onRmsChanged(float rmsdB) {}
 
-            @Override
-            public void onBufferReceived(byte[] buffer) {}
+                @Override
+                public void onBufferReceived(byte[] buffer) {}
 
-            @Override
-            public void onEndOfSpeech() {}
+                @Override
+                public void onEndOfSpeech() {}
 
-            @Override
-            public void onError(int error) {}
+                @Override
+                public void onError(int error) {}
 
-            @Override
-            public void onResults(Bundle results) {
-                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (matches != null && matches.size() > 0) {
-                    // Set the recognized speech to your TextView
-                    String spokenText = matches.get(0);
-                    result_text.setText(spokenText);
+                @Override
+                public void onResults(Bundle results) {
+                    ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                    if (matches != null && matches.size() > 0) {
+                        String recognizedText = matches.get(0);
+
+                        // Set the recognized speech to your TextView or handle it as needed
+                        result_text.setText(recognizedText);
+                    }
                 }
-                stopListening();
-            }
 
-            @Override
-            public void onPartialResults(Bundle partialResults) {}
+                @Override
+                public void onPartialResults(Bundle partialResults) {}
 
-            @Override
-            public void onEvent(int eventType, Bundle params) {}
-        });
+                @Override
+                public void onEvent(int eventType, Bundle params) {}
+            });
+        }
+    }
 
+    private void startListening() {
+        initSpeechRecognizer();
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        // Set the language to Urdu
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ur-RU"); // ur-RU is the locale for Roman Urdu
+
         speechRecognizer.startListening(intent);
     }
+    
+
 
     // Method to stop listening
     private void stopListening() {
         if (speechRecognizer != null) {
             speechRecognizer.stopListening();
-            speechRecognizer.destroy();
+            speechRecognizer.cancel();
+            // Do not destroy the SpeechRecognizer instance here if it's intended to be reused.
         }
     }
-
 
 
 
