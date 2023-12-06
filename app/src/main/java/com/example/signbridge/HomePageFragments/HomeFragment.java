@@ -1,10 +1,13 @@
-package com.example.signbridge;
+package com.example.signbridge.HomePageFragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.icu.text.Transliterator;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import android.os.Handler;
 import android.speech.RecognitionListener;
@@ -18,6 +21,10 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.signbridge.DBHelper;
+import com.example.signbridge.R;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -30,12 +37,20 @@ public class HomeFragment extends Fragment {
     TextView listeningText,result_text;
     ImageView cameraImg;
 
+    DBHelper dbHelper ;
+
     SpeechRecognizer speechRecognizer;
     Handler handler = new Handler();
     boolean isButtonHeld = false;
 
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        dbHelper = new DBHelper(requireContext());
     }
 
 
@@ -68,6 +83,8 @@ public class HomeFragment extends Fragment {
                 isButtonHeld = false;
                 handler.removeCallbacks(startListeningRunnable);
                 handleVoiceListening(false);
+                
+
             }
             return true;
         });
@@ -126,6 +143,7 @@ public class HomeFragment extends Fragment {
 
                         // Set the recognized speech to your TextView or handle it as needed
                         result_text.setText(recognizedText);
+                        saveToDatabase(recognizedText);
                     }
                 }
 
@@ -147,8 +165,6 @@ public class HomeFragment extends Fragment {
 
         speechRecognizer.startListening(intent);
     }
-    
-
 
     // Method to stop listening
     private void stopListening() {
@@ -156,6 +172,17 @@ public class HomeFragment extends Fragment {
             speechRecognizer.stopListening();
             speechRecognizer.cancel();
             // Do not destroy the SpeechRecognizer instance here if it's intended to be reused.
+        }
+    }
+
+
+    private void saveToDatabase(String text) {
+        // Assuming dbHelper is an instance of your DBHelper class
+        long id = dbHelper.insertData(text);
+        if (id != -1) {
+            Toast.makeText(requireContext(),"Data Saved",Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(requireContext(),"Save failed",Toast.LENGTH_SHORT).show();
         }
     }
 

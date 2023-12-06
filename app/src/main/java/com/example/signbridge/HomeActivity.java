@@ -9,18 +9,17 @@ import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.signbridge.HomePageFragments.HistoryFragment;
+import com.example.signbridge.HomePageFragments.HomeFragment;
+
 public class HomeActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
-    LinearLayout item1,item2,item3;
-    TextView item1_text,item2_text,item3_text;
-    ImageView item1_img,item2_img,item3_img;
 
     private ImageView[] imageViews = new ImageView[3]; // Array to store ImageViews
     private TextView[] textViews = new TextView[3]; // Array to store TextViews

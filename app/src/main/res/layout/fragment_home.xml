@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".HomeFragment">
+    tools:context=".HomePageFragments.HomeFragment">
 
     <TextView
         android:id="@+id/text_value_id"
@@ -22,14 +22,11 @@
 
     <ImageView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/model_image"
+        android:layout_height="470dp"
+        android:src="@drawable/bg_imgg"
         app:layout_constraintBottom_toTopOf="@+id/cardView3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView3"
